@@ -1,0 +1,86 @@
+import json
+import os
+
+ARCHIVO = "datos.json"
+
+# Crear archivo si no existe
+if not os.path.exists(ARCHIVO):
+    with open(ARCHIVO, "w") as f:
+        json.dump({"ingresos": [], "gastos": []}, f)
+
+def cargar_datos():
+    with open(ARCHIVO, "r") as f:
+        return json.load(f)
+
+def guardar_datos(data):
+    with open(ARCHIVO, "w") as f:
+        json.dump(data, f, indent=4)
+
+def registrar_ingreso():
+    desc = input("Descripción del ingreso: ")
+    monto = float(input("Monto: "))
+
+    data = cargar_datos()
+    data["ingresos"].append({"descripcion": desc, "monto": monto})
+    guardar_datos(data)
+
+    print("✔ Ingreso registrado")
+
+def registrar_gasto():
+    desc = input("Descripción del gasto: ")
+    monto = float(input("Monto: "))
+
+    data = cargar_datos()
+    data["gastos"].append({"descripcion": desc, "monto": monto})
+    guardar_datos(data)
+
+    print("✔ Gasto registrado")
+
+def ver_resumen():
+    data = cargar_datos()
+
+    total_ingresos = sum(i["monto"] for i in data["ingresos"])
+    total_gastos = sum(g["monto"] for g in data["gastos"])
+    saldo = total_ingresos - total_gastos
+
+    print("\n===== RESUMEN FINANCIERO =====")
+    print(f"Ingresos: ${total_ingresos}")
+    print(f"Gastos: ${total_gastos}")
+    print(f"Saldo: ${saldo}")
+
+def ver_movimientos():
+    data = cargar_datos()
+
+    print("\n--- INGRESOS ---")
+    for i in data["ingresos"]:
+        print(i["descripcion"], "-", i["monto"])
+
+    print("\n--- GASTOS ---")
+    for g in data["gastos"]:
+        print(g["descripcion"], "-", g["monto"])
+
+def menu():
+    while True:
+        print("\n=== SISTEMA CONTABLE BÁSICO ===")
+        print("1. Registrar ingreso")
+        print("2. Registrar gasto")
+        print("3. Ver resumen")
+        print("4. Ver movimientos")
+        print("5. Salir")
+
+        opcion = input("Opción: ")
+
+        if opcion == "1":
+            registrar_ingreso()
+        elif opcion == "2":
+            registrar_gasto()
+        elif opcion == "3":
+            ver_resumen()
+        elif opcion == "4":
+            ver_movimientos()
+        elif opcion == "5":
+            break
+        else:
+            print("Opción inválida")
+
+menu()
